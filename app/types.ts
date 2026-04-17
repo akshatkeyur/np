@@ -6,6 +6,7 @@ export interface FormData {
   concurrency_interval: number;
   start_time: string;
   end_time: string;
+  manual_encrypted_password?: string; // set after capture — bypasses local encryption
 }
 
 export interface LogEntry {

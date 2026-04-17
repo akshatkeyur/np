@@ -8,13 +8,16 @@ import {
   Grid,
   Alert,
   Snackbar,
+  Chip,
 } from '@mui/material';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import { BugReport, Bolt } from '@mui/icons-material';
+import { Bolt, Key } from '@mui/icons-material';
 import theme from './theme';
 import Form from './components/Form';
 import StatusPanel from './components/StatusPanel';
 import Controls from './components/Controls';
+import CapturePanel from './components/CapturePanel';
+import AuthGate from './components/AuthGate';
 import { useRunner } from './hooks/useRunner';
 import { login } from './utils/api';
 import { FormData } from './types';
@@ -29,6 +32,7 @@ export default function Home() {
     concurrency_interval: 2000,
     start_time: dayjs().format('YYYY-MM-DDTHH:mm'),
     end_time: dayjs().add(5, 'minute').format('YYYY-MM-DDTHH:mm'),
+    manual_encrypted_password: undefined,
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -48,6 +52,26 @@ export default function Home() {
     setSnackbar({ open: true, message, severity });
   };
 
+  // ── Capture callback: auto-fills EVERYTHING so the user can just hit Run ──
+  const handleCaptured = useCallback(
+    (encryptedPassword: string, user: string, baseUrl: string) => {
+      setFormData((prev) => ({
+        ...prev,
+        base_url: baseUrl || prev.base_url,
+        username: user || prev.username,
+        manual_encrypted_password: encryptedPassword,
+      }));
+      // Capture already proves login works → mark as authenticated
+      setIsAuthenticated(true);
+      showSnackbar(
+        '🔑 Credentials captured! Base URL & username auto-filled. Configure timing and hit Run Test.',
+        'success'
+      );
+    },
+    []
+  );
+
+  // ── Manual test credentials (only used when NOT in capture mode) ──
   const handleTestCredentials = useCallback(async () => {
     if (!formData.base_url || !formData.username || !formData.password) {
       showSnackbar('Please fill in all credential fields', 'warning');
@@ -72,6 +96,7 @@ export default function Home() {
     }
   }, [formData]);
 
+  // ── Run handler ──
   const handleRun = useCallback(() => {
     if (!formData.start_time || !formData.end_time) {
       showSnackbar('Please set start and end times', 'warning');
@@ -84,17 +109,20 @@ export default function Home() {
     start(formData);
   }, [formData, start]);
 
+  const hasCapturedPassword = !!formData.manual_encrypted_password;
+
   const canRun =
     !!formData.base_url &&
     !!formData.username &&
-    !!formData.password &&
+    (!!formData.password || hasCapturedPassword) &&
     !!formData.start_time &&
     !!formData.end_time;
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box
+      <AuthGate>
+        <Box
         sx={{
           minHeight: '100vh',
           background: 'radial-gradient(ellipse at top, #1a1040 0%, #0A0E1A 50%, #060810 100%)',
@@ -112,17 +140,10 @@ export default function Home() {
           },
         }}
       >
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, py: { xs: 3, md: 4 } }}>
+        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1, py: { xs: 3, md: 4 } }}>
           {/* Header */}
           <Box sx={{ textAlign: 'center', mb: { xs: 3, md: 4 } }}>
-            <Box
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 1.5,
-                mb: 1,
-              }}
-            >
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
               <Box
                 sx={{
                   p: 1,
@@ -147,26 +168,40 @@ export default function Home() {
                 API Stress Tester
               </Typography>
             </Box>
-            <Typography
-              variant="body2"
-              sx={{ color: 'text.secondary', maxWidth: 500, mx: 'auto' }}
-            >
-              Test your API endpoints with configurable concurrent requests,
-              real-time monitoring, and detailed execution logs.
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                Concurrent API load testing with headless browser credential capture
+              </Typography>
+              {hasCapturedPassword && (
+                <Chip
+                  icon={<Key sx={{ fontSize: 14 }} />}
+                  label="Captured Password Active"
+                  size="small"
+                  color="warning"
+                  variant="filled"
+                  sx={{ fontSize: '0.7rem', height: 22 }}
+                />
+              )}
+            </Box>
           </Box>
 
-          {/* Main Content */}
+          {/* Main Layout */}
           <Grid container spacing={3}>
-            <Grid item xs={12} md={5}>
+            {/* Left: Config + Capture */}
+            <Grid size={{ xs: 12, md: 4 }}>
               <Form
                 formData={formData}
                 onChange={setFormData}
                 disabled={stats.isRunning}
               />
+              <CapturePanel
+                onCaptured={handleCaptured}
+                isRunning={stats.isRunning}
+              />
             </Grid>
 
-            <Grid item xs={12} md={7}>
+            {/* Right: Status Panel */}
+            <Grid size={{ xs: 12, md: 8 }}>
               <StatusPanel stats={stats} />
             </Grid>
           </Grid>
@@ -182,6 +217,7 @@ export default function Home() {
             isAuthenticated={isAuthenticated}
             hasLogs={stats.logs.length > 0}
             canRun={canRun}
+            hasCapturedPassword={hasCapturedPassword}
           />
         </Container>
       </Box>
@@ -202,6 +238,7 @@ export default function Home() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      </AuthGate>
     </ThemeProvider>
   );
 }

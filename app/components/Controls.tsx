@@ -5,12 +5,14 @@ import {
   Box,
   Button,
   CircularProgress,
+  Chip,
 } from '@mui/material';
 import {
   VerifiedUser,
   PlayArrow,
   Stop,
   FileDownload,
+  Key,
 } from '@mui/icons-material';
 
 interface ControlsProps {
@@ -23,6 +25,8 @@ interface ControlsProps {
   isAuthenticated: boolean;
   hasLogs: boolean;
   canRun: boolean;
+  /** True when a captured encrypted password is available — bypasses "Test Credentials" gate */
+  hasCapturedPassword: boolean;
 }
 
 const Controls: React.FC<ControlsProps> = ({
@@ -35,7 +39,14 @@ const Controls: React.FC<ControlsProps> = ({
   isAuthenticated,
   hasLogs,
   canRun,
+  hasCapturedPassword,
 }) => {
+  // Run is enabled when:
+  //   - captured password is active (login already proven via Puppeteer), OR
+  //   - manual "Test Credentials" was successful
+  // AND: canRun is true (base_url + username + time window filled)
+  const runEnabled = canRun && (hasCapturedPassword || isAuthenticated) && !isTesting;
+
   return (
     <Box
       sx={{
@@ -49,37 +60,52 @@ const Controls: React.FC<ControlsProps> = ({
         gap: 1.5,
         flexWrap: 'wrap',
         justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
-      <Button
-        id="btn-test-credentials"
-        variant="outlined"
-        color={isAuthenticated ? 'success' : 'primary'}
-        startIcon={
-          isTesting ? (
-            <CircularProgress size={18} color="inherit" />
-          ) : (
-            <VerifiedUser />
-          )
-        }
-        onClick={onTestCredentials}
-        disabled={isTesting || isRunning}
-        sx={{
-          minWidth: 160,
-          borderWidth: 2,
-          '&:hover': { borderWidth: 2 },
-          ...(isAuthenticated && {
-            borderColor: 'success.main',
-            color: 'success.main',
-          }),
-        }}
-      >
-        {isTesting
-          ? 'Testing...'
-          : isAuthenticated
-          ? 'Verified ✓'
-          : 'Test Credentials'}
-      </Button>
+      {/* Test Credentials — only shown when NOT using capture mode */}
+      {!hasCapturedPassword && (
+        <Button
+          id="btn-test-credentials"
+          variant="outlined"
+          color={isAuthenticated ? 'success' : 'primary'}
+          startIcon={
+            isTesting ? (
+              <CircularProgress size={18} color="inherit" />
+            ) : (
+              <VerifiedUser />
+            )
+          }
+          onClick={onTestCredentials}
+          disabled={isTesting || isRunning}
+          sx={{
+            minWidth: 160,
+            borderWidth: 2,
+            '&:hover': { borderWidth: 2 },
+            ...(isAuthenticated && {
+              borderColor: 'success.main',
+              color: 'success.main',
+            }),
+          }}
+        >
+          {isTesting
+            ? 'Testing...'
+            : isAuthenticated
+            ? 'Verified ✓'
+            : 'Test Credentials'}
+        </Button>
+      )}
+
+      {/* Show capture status chip when in capture mode */}
+      {hasCapturedPassword && (
+        <Chip
+          icon={<Key sx={{ fontSize: 16 }} />}
+          label="Capture Verified — Ready to Run"
+          color="success"
+          variant="filled"
+          sx={{ fontWeight: 600, fontSize: '0.78rem', height: 32, px: 1 }}
+        />
+      )}
 
       {!isRunning ? (
         <Button
@@ -88,13 +114,13 @@ const Controls: React.FC<ControlsProps> = ({
           color="primary"
           startIcon={<PlayArrow />}
           onClick={onRun}
-          disabled={!isAuthenticated || !canRun || isTesting}
+          disabled={!runEnabled}
           sx={{
             minWidth: 140,
-            background: isAuthenticated
+            background: runEnabled
               ? 'linear-gradient(135deg, #7C4DFF 0%, #448AFF 100%)'
               : undefined,
-            boxShadow: isAuthenticated
+            boxShadow: runEnabled
               ? '0 4px 20px rgba(124, 77, 255, 0.4)'
               : 'none',
           }}

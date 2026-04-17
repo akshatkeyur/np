@@ -11,6 +11,7 @@ import {
   Box,
   Divider,
   Chip,
+  Alert,
 } from '@mui/material';
 import {
   Link as LinkIcon,
@@ -19,9 +20,10 @@ import {
   Speed,
   Timer,
   CalendarMonth,
+  Key,
+  CheckCircle,
 } from '@mui/icons-material';
 import { FormData } from '../types';
-import dayjs from 'dayjs';
 
 interface FormProps {
   formData: FormData;
@@ -33,6 +35,8 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
   const handleChange = (field: keyof FormData, value: string | number) => {
     onChange({ ...formData, [field]: value });
   };
+
+  const isCaptured = !!formData.manual_encrypted_password;
 
   return (
     <Card
@@ -46,7 +50,9 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
           left: 0,
           right: 0,
           height: '3px',
-          background: 'linear-gradient(90deg, #7C4DFF, #00E5FF, #69F0AE)',
+          background: isCaptured
+            ? 'linear-gradient(90deg, #69F0AE, #00E5FF, #7C4DFF)'
+            : 'linear-gradient(90deg, #7C4DFF, #00E5FF, #69F0AE)',
           borderRadius: '16px 16px 0 0',
         },
       }}
@@ -56,27 +62,56 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
           <Typography variant="h6" sx={{ fontSize: { xs: '1rem', md: '1.15rem' } }}>
             API Configuration
           </Typography>
-          <Chip
-            label="Required"
-            size="small"
-            color="primary"
-            variant="outlined"
-            sx={{ fontSize: '0.7rem', height: 22 }}
-          />
+          {isCaptured ? (
+            <Chip
+              icon={<CheckCircle sx={{ fontSize: 14 }} />}
+              label="Auto-filled"
+              size="small"
+              color="success"
+              variant="filled"
+              sx={{ fontSize: '0.7rem', height: 22 }}
+            />
+          ) : (
+            <Chip
+              label="Required"
+              size="small"
+              color="primary"
+              variant="outlined"
+              sx={{ fontSize: '0.7rem', height: 22 }}
+            />
+          )}
         </Box>
+
+        {/* Captured mode info banner */}
+        {isCaptured && (
+          <Alert
+            severity="success"
+            icon={<Key sx={{ fontSize: 18 }} />}
+            sx={{
+              mb: 2,
+              borderRadius: 3,
+              fontSize: '0.78rem',
+              background: 'rgba(105,240,174,0.06)',
+              border: '1px solid rgba(105,240,174,0.15)',
+              '& .MuiAlert-icon': { color: '#69F0AE' },
+            }}
+          >
+            Credentials auto-filled from capture. Configure timing below, then hit <strong>Run Test</strong>.
+          </Alert>
+        )}
 
         <Grid container spacing={2}>
           {/* Credentials Section */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography
               variant="caption"
               sx={{ color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}
             >
-              Credentials
+              {isCaptured ? 'Credentials (captured)' : 'Credentials'}
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               id="base-url"
               fullWidth
@@ -88,17 +123,31 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
               size="small"
               slotProps={{
                 input: {
+                  readOnly: isCaptured,
                   startAdornment: (
                     <InputAdornment position="start">
-                      <LinkIcon sx={{ color: 'primary.main', fontSize: 20 }} />
+                      <LinkIcon sx={{ color: isCaptured ? '#69F0AE' : 'primary.main', fontSize: 20 }} />
                     </InputAdornment>
                   ),
+                  ...(isCaptured && {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <CheckCircle sx={{ color: '#69F0AE', fontSize: 16 }} />
+                      </InputAdornment>
+                    ),
+                  }),
                 },
               }}
+              sx={isCaptured ? {
+                '& .MuiOutlinedInput-root': {
+                  borderColor: 'rgba(105,240,174,0.3)',
+                  '& fieldset': { borderColor: 'rgba(105,240,174,0.3)' },
+                },
+              } : {}}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               id="username"
               fullWidth
@@ -110,44 +159,83 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
               size="small"
               slotProps={{
                 input: {
+                  readOnly: isCaptured,
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Person sx={{ color: 'primary.main', fontSize: 20 }} />
+                      <Person sx={{ color: isCaptured ? '#69F0AE' : 'primary.main', fontSize: 20 }} />
                     </InputAdornment>
                   ),
+                  ...(isCaptured && {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <CheckCircle sx={{ color: '#69F0AE', fontSize: 16 }} />
+                      </InputAdornment>
+                    ),
+                  }),
                 },
               }}
+              sx={isCaptured ? {
+                '& .MuiOutlinedInput-root fieldset': { borderColor: 'rgba(105,240,174,0.3)' },
+              } : {}}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="password"
-              fullWidth
-              label="Password"
-              type="password"
-              value={formData.password}
-              onChange={(e) => handleChange('password', e.target.value)}
-              disabled={disabled}
-              size="small"
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Lock sx={{ color: 'primary.main', fontSize: 20 }} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
+          <Grid size={{ xs: 12, sm: 6 }}>
+            {isCaptured ? (
+              <TextField
+                id="password"
+                fullWidth
+                label="Password"
+                value="●●●●●●●● (encrypted)"
+                size="small"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Key sx={{ color: '#69F0AE', fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <CheckCircle sx={{ color: '#69F0AE', fontSize: 16 }} />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root fieldset': { borderColor: 'rgba(105,240,174,0.3)' },
+                }}
+              />
+            ) : (
+              <TextField
+                id="password"
+                fullWidth
+                label="Password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => handleChange('password', e.target.value)}
+                disabled={disabled}
+                size="small"
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock sx={{ color: 'primary.main', fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            )}
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ borderColor: 'rgba(124, 77, 255, 0.1)', my: 0.5 }} />
           </Grid>
 
           {/* Concurrency Section */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography
               variant="caption"
               sx={{ color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}
@@ -156,7 +244,7 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
             </Typography>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid size={6}>
             <TextField
               id="concurrency"
               fullWidth
@@ -182,7 +270,7 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
             />
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid size={6}>
             <TextField
               id="concurrency-interval"
               fullWidth
@@ -208,12 +296,12 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ borderColor: 'rgba(124, 77, 255, 0.1)', my: 0.5 }} />
           </Grid>
 
           {/* Time Window Section */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography
               variant="caption"
               sx={{ color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}
@@ -222,7 +310,7 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
             </Typography>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               id="start-time"
               fullWidth
@@ -245,7 +333,7 @@ const Form: React.FC<FormProps> = ({ formData, onChange, disabled }) => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               id="end-time"
               fullWidth

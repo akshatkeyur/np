@@ -70,6 +70,8 @@ export const useRunner = () => {
             username: formData.username,
             password: formData.password,
             signal,
+            // Pass pre-captured encrypted password if available
+            manualEncryptedPassword: formData.manual_encrypted_password,
           });
           const duration = Math.round(performance.now() - startTime);
           setStats((prev) => ({
@@ -136,7 +138,10 @@ export const useRunner = () => {
       });
 
       startElapsedTimer();
-      addLog('info', `🚀 Runner started — concurrency: ${Math.min(formData.concurrency, MAX_CONCURRENCY)}, interval: ${formData.concurrency_interval}ms`);
+      const passwordMode = formData.manual_encrypted_password
+        ? '🔑 captured encrypted password'
+        : '🔐 local AES encryption';
+      addLog('info', `🚀 Runner started — concurrency: ${Math.min(formData.concurrency, MAX_CONCURRENCY)}, interval: ${formData.concurrency_interval}ms, mode: ${passwordMode}`);
 
       const signal = abortControllerRef.current.signal;
 

@@ -144,7 +144,7 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ stats }) => {
 
         {/* Stats Grid */}
         <Grid container spacing={1.5} sx={{ mb: 2.5 }}>
-          <Grid item xs={6} sm={3}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <StatCard
               icon={<TrendingUp sx={{ fontSize: 16, color: '#7C4DFF' }} />}
               label="Total"
@@ -153,7 +153,7 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ stats }) => {
               glow="linear-gradient(90deg, transparent, #7C4DFF, transparent)"
             />
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <StatCard
               icon={<CheckCircle sx={{ fontSize: 16, color: '#69F0AE' }} />}
               label="Success"
@@ -162,7 +162,7 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ stats }) => {
               glow="linear-gradient(90deg, transparent, #69F0AE, transparent)"
             />
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <StatCard
               icon={<Cancel sx={{ fontSize: 16, color: '#FF5252' }} />}
               label="Failed"
@@ -171,7 +171,7 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ stats }) => {
               glow="linear-gradient(90deg, transparent, #FF5252, transparent)"
             />
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <StatCard
               icon={<AccessTime sx={{ fontSize: 16, color: '#00E5FF' }} />}
               label="Success Rate"

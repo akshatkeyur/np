@@ -14,6 +14,8 @@ export interface DashboardPayload {
   username: string;
   password: string;
   signal?: AbortSignal;
+  /** If set, skips local AES encryption and uses this value directly */
+  manualEncryptedPassword?: string;
 }
 
 export const login = async (payload: LoginPayload): Promise<AxiosResponse> => {
@@ -31,7 +33,12 @@ export const login = async (payload: LoginPayload): Promise<AxiosResponse> => {
 export const fetchDashboard = async (
   payload: DashboardPayload
 ): Promise<AxiosResponse> => {
-  const encryptedPassword = encryptPassword(payload.password);
+  // If a pre-captured encrypted password exists, use it directly
+  // This avoids double-encryption and is the whole point of the capture flow
+  const encryptedPassword = payload.manualEncryptedPassword
+    ? payload.manualEncryptedPassword
+    : encryptPassword(payload.password);
+
   return axios.get(
     `https://${payload.base_url}/admin/dashboard`,
     {
