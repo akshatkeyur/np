@@ -158,8 +158,8 @@ export async function POST(request: NextRequest) {
     log('info', `Navigating to: ${frontend_login_url}`);
     try {
       const response = await page.goto(frontend_login_url, {
-        waitUntil: 'domcontentloaded', // less strict than networkidle2
-        timeout: 30000,                // 30s
+        waitUntil: 'domcontentloaded',
+        timeout: 120000, 
       });
       const status = response?.status() ?? 'unknown';
       log('info', `Page loaded — HTTP status: ${status}`);
@@ -201,9 +201,9 @@ export async function POST(request: NextRequest) {
         log('info', `  [${i}] type="${btn.type}" text="${btn.text}"`);
       });
     } catch (navErr) {
-      log('error', `Navigation failed: ${navErr instanceof Error ? navErr.message : String(navErr)}`);
-      await browser.close();
-      return fail(`Failed to load page: ${frontend_login_url}. See debugLogs for details.`);
+      log('warn', `Navigation wait failed/timed out: ${navErr instanceof Error ? navErr.message : String(navErr)}`);
+      log('info', 'Attempting to proceed anyway since the initial HTML was received...');
+      // We do NOT return fail() here. We just continue and see if the inputs are ready.
     }
 
     // Fill username
