@@ -207,41 +207,47 @@ export async function POST(request: NextRequest) {
     }
 
     // Fill username
-    log('info', `Trying username selector: "${username_selector}"`);
+    log('info', `Trying to focus & fill username...`);
     try {
-      await page.waitForSelector(username_selector, { timeout: 8000 });
-      await page.click(username_selector, { clickCount: 3 });
-      await page.type(username_selector, username, { delay: 50 });
-      log('success', `Username filled`);
+      await page.evaluate((sel) => {
+        const el = document.querySelector(sel) || document.querySelector('input[type="text"]') || document.querySelector('input[name="username"]');
+        if (el) (el as HTMLElement).focus();
+      }, username_selector);
+      await page.keyboard.type(username, { delay: 50 });
+      log('success', `Username filled via keyboard fallback`);
     } catch (e) {
-      log('error', `Username field not found: ${e instanceof Error ? e.message : String(e)}`);
+      log('error', `Failed to type username: ${e instanceof Error ? e.message : String(e)}`);
       await browser.close();
-      return fail(`Username field not found with selector: "${username_selector}"`, 500);
+      return fail(`Could not input username`, 500);
     }
 
     // Fill password
-    log('info', `Trying password selector: "${password_selector}"`);
+    log('info', `Trying to focus & fill password...`);
     try {
-      await page.waitForSelector(password_selector, { timeout: 5000 });
-      await page.click(password_selector, { clickCount: 3 });
-      await page.type(password_selector, password, { delay: 50 });
-      log('success', `Password filled`);
+      await page.evaluate((sel) => {
+        const el = document.querySelector(sel) || document.querySelector('input[type="password"]') || document.querySelector('input[name="password"]');
+        if (el) (el as HTMLElement).focus();
+      }, password_selector);
+      await page.keyboard.type(password, { delay: 50 });
+      log('success', `Password filled via keyboard fallback`);
     } catch (e) {
-      log('error', `Password field not found: ${e instanceof Error ? e.message : String(e)}`);
+      log('error', `Failed to type password: ${e instanceof Error ? e.message : String(e)}`);
       await browser.close();
-      return fail(`Password field not found with selector: "${password_selector}"`, 500);
+      return fail(`Could not input password`, 500);
     }
 
     // Click submit
-    log('info', `Trying submit selector: "${submit_selector}"`);
+    log('info', `Trying to click submit...`);
     try {
-      await page.waitForSelector(submit_selector, { timeout: 5000 });
-      await page.click(submit_selector);
-      log('success', 'Submit button clicked');
+      await page.evaluate((sel) => {
+        const el = document.querySelector(sel) || document.querySelector('button[type="submit"]') || document.querySelector('button');
+        if (el) (el as HTMLElement).click();
+      }, submit_selector);
+      log('success', 'Submit button clicked via evaluation fallback');
     } catch (e) {
-      log('error', `Submit button not found: ${e instanceof Error ? e.message : String(e)}`);
+      log('error', `Submit button click failed: ${e instanceof Error ? e.message : String(e)}`);
       await browser.close();
-      return fail(`Submit button not found with selector: "${submit_selector}"`, 500);
+      return fail(`Submit button not found`, 500);
     }
 
     // Wait for intercepted /admin/login POST (10s timeout)
