@@ -19,12 +19,13 @@ import Controls from './components/Controls';
 import CapturePanel from './components/CapturePanel';
 import AuthGate from './components/AuthGate';
 import { useRunner } from './hooks/useRunner';
-import { login } from './utils/api';
+import { getPatientToken } from './utils/api';
 import { FormData } from './types';
 import dayjs from 'dayjs';
 
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
+    frontend_login_url: '',
     base_url: '',
     username: '',
     password: '',
@@ -35,22 +36,26 @@ export default function Home() {
     manual_encrypted_password: undefined,
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isTesting, setIsTesting] = useState(false);
+  const [patientToken, setPatientToken] = useState<string | null>(null);
+  const [patientTokenUser, setPatientTokenUser] = useState('');
+  const [isGettingPatientToken, setIsGettingPatientToken] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
     severity: 'success' | 'error' | 'info' | 'warning';
   }>({ open: false, message: '', severity: 'info' });
 
-  const { stats, start, stop, exportLogs } = useRunner();
+  const { stats, startDashboard, startPatient, stop, exportLogs } = useRunner();
 
-  const showSnackbar = (
-    message: string,
-    severity: 'success' | 'error' | 'info' | 'warning'
-  ) => {
-    setSnackbar({ open: true, message, severity });
-  };
+  const showSnackbar = useCallback(
+    (
+      message: string,
+      severity: 'success' | 'error' | 'info' | 'warning'
+    ) => {
+      setSnackbar({ open: true, message, severity });
+    },
+    []
+  );
 
   // ── Capture callback: auto-fills EVERYTHING so the user can just hit Run ──
   const handleCaptured = useCallback(
@@ -61,62 +66,97 @@ export default function Home() {
         username: user || prev.username,
         manual_encrypted_password: encryptedPassword,
       }));
-      // Capture already proves login works → mark as authenticated
-      setIsAuthenticated(true);
       showSnackbar(
         '🔑 Credentials captured! Base URL & username auto-filled. Configure timing and hit Run Test.',
         'success'
       );
     },
-    []
+    [showSnackbar]
   );
 
-  // ── Manual test credentials (only used when NOT in capture mode) ──
-  const handleTestCredentials = useCallback(async () => {
-    if (!formData.base_url || !formData.username || !formData.password) {
-      showSnackbar('Please fill in all credential fields', 'warning');
-      return;
-    }
-    setIsTesting(true);
-    setIsAuthenticated(false);
-    try {
-      await login({
-        base_url: formData.base_url,
-        username: formData.username,
-        password: formData.password,
-      });
-      setIsAuthenticated(true);
-      showSnackbar('Credentials verified successfully!', 'success');
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Login failed';
-      setIsAuthenticated(false);
-      showSnackbar(`Authentication failed: ${errorMsg}`, 'error');
-    } finally {
-      setIsTesting(false);
-    }
-  }, [formData]);
-
-  // ── Run handler ──
-  const handleRun = useCallback(() => {
+  const validateExecutionWindow = useCallback(() => {
     if (!formData.start_time || !formData.end_time) {
       showSnackbar('Please set start and end times', 'warning');
-      return;
+      return false;
     }
     if (dayjs(formData.end_time).isBefore(dayjs(formData.start_time))) {
       showSnackbar('End time must be after start time', 'error');
+      return false;
+    }
+    return true;
+  }, [formData.end_time, formData.start_time, showSnackbar]);
+
+  const handleGetPatientToken = useCallback(async () => {
+    if (!formData.frontend_login_url || !formData.username || !formData.password) {
+      showSnackbar('Frontend login URL, username, and password are required.', 'warning');
       return;
     }
-    start(formData);
-  }, [formData, start]);
+    setIsGettingPatientToken(true);
+    try {
+      const data = await getPatientToken({
+        frontend_login_url: formData.frontend_login_url,
+        username: formData.username,
+        password: formData.password,
+      });
+      if (!data.success || !data.token) {
+        showSnackbar(data.error ?? 'Failed to get patient token.', 'error');
+        return;
+      }
+
+      const userLabel = data.user?.email
+        || [data.user?.first_name, data.user?.last_name].filter(Boolean).join(' ').trim();
+
+      setFormData((prev) => ({
+        ...prev,
+        base_url: data.capturedBaseUrl || prev.base_url,
+      }));
+      setPatientToken(data.token);
+      setPatientTokenUser(userLabel);
+      showSnackbar('Patient token acquired successfully. Patient Test is ready.', 'success');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Token acquisition failed';
+      showSnackbar(`Failed to get patient token: ${errorMsg}`, 'error');
+    } finally {
+      setIsGettingPatientToken(false);
+    }
+  }, [formData.frontend_login_url, formData.password, formData.username, showSnackbar]);
+
+  // ── Run handler ──
+  const handleRun = useCallback(() => {
+    if (!validateExecutionWindow()) {
+      return;
+    }
+    startDashboard(formData);
+  }, [formData, startDashboard, validateExecutionWindow]);
+
+  const handlePatientTest = useCallback(() => {
+    if (!patientToken) {
+      showSnackbar('Get a patient token before starting Patient Test.', 'warning');
+      return;
+    }
+    if (!validateExecutionWindow()) {
+      return;
+    }
+    startPatient(formData, patientToken);
+  }, [formData, patientToken, showSnackbar, startPatient, validateExecutionWindow]);
 
   const hasCapturedPassword = !!formData.manual_encrypted_password;
+  const hasPatientToken = !!patientToken;
 
-  const canRun =
+  const canRunDashboard =
     !!formData.base_url &&
     !!formData.username &&
     (!!formData.password || hasCapturedPassword) &&
     !!formData.start_time &&
-    !!formData.end_time;
+    !!formData.end_time &&
+    !hasPatientToken;
+
+  const canRunPatient =
+    !!formData.base_url &&
+    !!formData.start_time &&
+    !!formData.end_time &&
+    hasPatientToken &&
+    !hasCapturedPassword;
 
   return (
     <ThemeProvider theme={theme}>
@@ -192,6 +232,10 @@ export default function Home() {
               <Form
                 formData={formData}
                 onChange={setFormData}
+                onGetPatientToken={handleGetPatientToken}
+                isGettingPatientToken={isGettingPatientToken}
+                hasPatientToken={hasPatientToken}
+                patientTokenUser={patientTokenUser}
                 disabled={stats.isRunning}
               />
               <CapturePanel
@@ -208,16 +252,16 @@ export default function Home() {
 
           {/* Controls */}
           <Controls
-            onTestCredentials={handleTestCredentials}
             onRun={handleRun}
+            onPatientTest={handlePatientTest}
             onStop={stop}
             onExportLogs={exportLogs}
             isRunning={stats.isRunning}
-            isTesting={isTesting}
-            isAuthenticated={isAuthenticated}
             hasLogs={stats.logs.length > 0}
-            canRun={canRun}
+            canRunDashboard={canRunDashboard && !isGettingPatientToken}
+            canRunPatient={canRunPatient && !isGettingPatientToken}
             hasCapturedPassword={hasCapturedPassword}
+            hasPatientToken={hasPatientToken}
           />
         </Container>
       </Box>

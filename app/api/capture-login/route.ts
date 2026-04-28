@@ -112,7 +112,6 @@ export async function POST(request: NextRequest) {
     // Enable request interception to sniff the login POST body
     await page.setRequestInterception(true);
 
-    let capturedPayload: CapturedPayload | null = null;
     let capturedApiUrl: string | null = null; // full URL of the intercepted POST
     let captureResolve: (value: CapturedPayload | null) => void;
 
@@ -133,7 +132,6 @@ export async function POST(request: NextRequest) {
           try {
             const parsed: CapturedPayload = JSON.parse(postData);
             log('success', `Parsed payload keys: ${Object.keys(parsed).join(', ')}`);
-            capturedPayload = parsed;
             captureResolve(parsed);
           } catch (e) {
             log('warn', `Failed to parse postData as JSON: ${e}`);
@@ -143,7 +141,6 @@ export async function POST(request: NextRequest) {
               const obj: CapturedPayload = {};
               params.forEach((v, k) => { obj[k] = v; });
               log('info', `Parsed as URLEncoded, keys: ${Object.keys(obj).join(', ')}`);
-              capturedPayload = obj;
               captureResolve(obj);
             } catch {
               log('error', 'Could not parse postData as URLEncoded either');

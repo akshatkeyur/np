@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Fade,
 } from '@mui/material';
-import { Lock, Mail } from '@mui/icons-material';
+import { Lock } from '@mui/icons-material';
 
 interface AuthGateProps {
   children: ReactNode;
@@ -48,7 +48,7 @@ export default function AuthGate({ children }: AuthGateProps) {
       } else {
         setError(data.message || 'Failed to request OTP');
       }
-    } catch (err) {
+    } catch {
       setError('Network error. Is the backend running on port 8000?');
     } finally {
       setLoading(false);
@@ -73,7 +73,7 @@ export default function AuthGate({ children }: AuthGateProps) {
       } else {
         setError(data.message || 'Invalid or expired OTP');
       }
-    } catch (err) {
+    } catch {
       setError('Network error during verification.');
     } finally {
       setLoading(false);

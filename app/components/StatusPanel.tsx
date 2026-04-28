@@ -111,7 +111,7 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ stats }) => {
       <CardContent sx={{ p: { xs: 2, md: 3 } }}>
         {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2.5, flexWrap: 'wrap', gap: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
             <Typography variant="h6" sx={{ fontSize: { xs: '1rem', md: '1.15rem' } }}>
               Live Status
             </Typography>
@@ -134,6 +134,15 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ stats }) => {
               variant={stats.isRunning ? 'filled' : 'outlined'}
               sx={{ fontSize: '0.7rem', height: 24 }}
             />
+            {stats.mode && (
+              <Chip
+                label={stats.mode === 'patient' ? 'Patient Mode' : 'Dashboard Mode'}
+                size="small"
+                color={stats.mode === 'patient' ? 'secondary' : 'primary'}
+                variant="outlined"
+                sx={{ fontSize: '0.7rem', height: 24 }}
+              />
+            )}
           </Box>
           {stats.startedAt && (
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>

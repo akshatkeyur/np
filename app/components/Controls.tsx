@@ -4,49 +4,41 @@ import React from 'react';
 import {
   Box,
   Button,
-  CircularProgress,
   Chip,
 } from '@mui/material';
 import {
-  VerifiedUser,
   PlayArrow,
   Stop,
   FileDownload,
   Key,
+  PeopleAlt,
 } from '@mui/icons-material';
 
 interface ControlsProps {
-  onTestCredentials: () => void;
   onRun: () => void;
+  onPatientTest: () => void;
   onStop: () => void;
   onExportLogs: () => void;
   isRunning: boolean;
-  isTesting: boolean;
-  isAuthenticated: boolean;
   hasLogs: boolean;
-  canRun: boolean;
-  /** True when a captured encrypted password is available — bypasses "Test Credentials" gate */
+  canRunDashboard: boolean;
+  canRunPatient: boolean;
   hasCapturedPassword: boolean;
+  hasPatientToken: boolean;
 }
 
 const Controls: React.FC<ControlsProps> = ({
-  onTestCredentials,
   onRun,
+  onPatientTest,
   onStop,
   onExportLogs,
   isRunning,
-  isTesting,
-  isAuthenticated,
   hasLogs,
-  canRun,
+  canRunDashboard,
+  canRunPatient,
   hasCapturedPassword,
+  hasPatientToken,
 }) => {
-  // Run is enabled when:
-  //   - captured password is active (login already proven via Puppeteer), OR
-  //   - manual "Test Credentials" was successful
-  // AND: canRun is true (base_url + username + time window filled)
-  const runEnabled = canRun && (hasCapturedPassword || isAuthenticated) && !isTesting;
-
   return (
     <Box
       sx={{
@@ -63,40 +55,6 @@ const Controls: React.FC<ControlsProps> = ({
         alignItems: 'center',
       }}
     >
-      {/* Test Credentials — only shown when NOT using capture mode */}
-      {!hasCapturedPassword && (
-        <Button
-          id="btn-test-credentials"
-          variant="outlined"
-          color={isAuthenticated ? 'success' : 'primary'}
-          startIcon={
-            isTesting ? (
-              <CircularProgress size={18} color="inherit" />
-            ) : (
-              <VerifiedUser />
-            )
-          }
-          onClick={onTestCredentials}
-          disabled={isTesting || isRunning}
-          sx={{
-            minWidth: 160,
-            borderWidth: 2,
-            '&:hover': { borderWidth: 2 },
-            ...(isAuthenticated && {
-              borderColor: 'success.main',
-              color: 'success.main',
-            }),
-          }}
-        >
-          {isTesting
-            ? 'Testing...'
-            : isAuthenticated
-            ? 'Verified ✓'
-            : 'Test Credentials'}
-        </Button>
-      )}
-
-      {/* Show capture status chip when in capture mode */}
       {hasCapturedPassword && (
         <Chip
           icon={<Key sx={{ fontSize: 16 }} />}
@@ -107,26 +65,59 @@ const Controls: React.FC<ControlsProps> = ({
         />
       )}
 
+      {hasPatientToken && (
+        <Chip
+          icon={<PeopleAlt sx={{ fontSize: 16 }} />}
+          label="Patient Token Ready"
+          color="secondary"
+          variant="filled"
+          sx={{ fontWeight: 600, fontSize: '0.78rem', height: 32, px: 1 }}
+        />
+      )}
+
       {!isRunning ? (
-        <Button
-          id="btn-run-test"
-          variant="contained"
-          color="primary"
-          startIcon={<PlayArrow />}
-          onClick={onRun}
-          disabled={!runEnabled}
-          sx={{
-            minWidth: 140,
-            background: runEnabled
-              ? 'linear-gradient(135deg, #7C4DFF 0%, #448AFF 100%)'
-              : undefined,
-            boxShadow: runEnabled
-              ? '0 4px 20px rgba(124, 77, 255, 0.4)'
-              : 'none',
-          }}
-        >
-          Run Test
-        </Button>
+        <>
+          <Button
+            id="btn-run-test"
+            variant="contained"
+            color="primary"
+            startIcon={<PlayArrow />}
+            onClick={onRun}
+            disabled={!canRunDashboard}
+            sx={{
+              minWidth: 140,
+              background: canRunDashboard
+                ? 'linear-gradient(135deg, #7C4DFF 0%, #448AFF 100%)'
+                : undefined,
+              boxShadow: canRunDashboard
+                ? '0 4px 20px rgba(124, 77, 255, 0.4)'
+                : 'none',
+            }}
+          >
+            Run Test
+          </Button>
+
+          <Button
+            id="btn-patient-test"
+            variant="contained"
+            color="secondary"
+            startIcon={<PeopleAlt />}
+            onClick={onPatientTest}
+            disabled={!canRunPatient}
+            sx={{
+              minWidth: 140,
+              background: canRunPatient
+                ? 'linear-gradient(135deg, #00E5FF 0%, #00B8D4 100%)'
+                : undefined,
+              color: canRunPatient ? '#04131A' : undefined,
+              boxShadow: canRunPatient
+                ? '0 4px 20px rgba(0, 229, 255, 0.35)'
+                : 'none',
+            }}
+          >
+            Patient Test
+          </Button>
+        </>
       ) : (
         <Button
           id="btn-stop"

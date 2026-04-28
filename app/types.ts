@@ -1,4 +1,5 @@
 export interface FormData {
+  frontend_login_url: string;
   base_url: string;
   username: string;
   password: string;
@@ -18,6 +19,7 @@ export interface LogEntry {
 }
 
 export interface RunnerStats {
+  mode: 'dashboard' | 'patient' | null;
   totalRequests: number;
   successCount: number;
   failureCount: number;

@@ -3,8 +3,8 @@ import { encryptPassword } from './encrypt';
 
 const TIMEOUT = 30000;
 
-export interface LoginPayload {
-  base_url: string;
+export interface BrowserLoginPayload {
+  frontend_login_url: string;
   username: string;
   password: string;
 }
@@ -18,16 +18,38 @@ export interface DashboardPayload {
   manualEncryptedPassword?: string;
 }
 
-export const login = async (payload: LoginPayload): Promise<AxiosResponse> => {
-  const encryptedPassword = encryptPassword(payload.password);
-  return axios.post('/api/proxy', {
-    method: 'POST',
-    url: `https://${payload.base_url}/admin/login`,
-    body: {
-      user: payload.username,
-      password: encryptedPassword,
-    }
-  }, { timeout: TIMEOUT });
+export interface PatientPayload {
+  base_url: string;
+  token: string;
+  signal?: AbortSignal;
+}
+
+interface PatientTokenApiResponse {
+  success: boolean;
+  token?: string;
+  user?: {
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+  };
+  capturedBaseUrl?: string;
+  error?: string;
+  debugLogs?: Array<{
+    time: string;
+    level: 'info' | 'warn' | 'error' | 'success';
+    message: string;
+  }>;
+}
+
+export const getPatientToken = async (
+  payload: BrowserLoginPayload
+): Promise<PatientTokenApiResponse> => {
+  const response = await axios.post<PatientTokenApiResponse>(
+    '/api/capture-patient-token',
+    payload,
+    { timeout: 120000 }
+  );
+  return response.data;
 };
 
 export const fetchDashboard = async (
@@ -50,6 +72,25 @@ export const fetchDashboard = async (
       filter_by: 'organization',
       user: payload.username,
       password: encryptedPassword,
+    }
+  }, {
+    timeout: TIMEOUT,
+    signal: payload.signal,
+  });
+};
+
+export const fetchPatients = async (
+  payload: PatientPayload
+): Promise<AxiosResponse> => {
+  return axios.post('/api/proxy', {
+    method: 'GET',
+    url: `https://${payload.base_url}/patient/getAllPatients`,
+    headers: {
+      Authorization: `Bearer ${payload.token}`,
+    },
+    params: {
+      page: '1',
+      limit: '80000000',
     }
   }, {
     timeout: TIMEOUT,
