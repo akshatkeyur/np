@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
-import { fetchDashboard, fetchPatients } from '../utils/api';
+import { fetchDashboard, fetchHealth, fetchPatients } from '../utils/api';
 import { FormData, LogEntry, RunnerStats } from '../types';
 
 const MAX_CONCURRENCY = 20;
@@ -66,7 +66,8 @@ export const useRunner = () => {
     async (
       formData: FormData,
       signal: AbortSignal,
-      runRequest: (signal: AbortSignal) => Promise<AxiosResponse>
+      runRequest: (signal: AbortSignal) => Promise<AxiosResponse>,
+      label: string
     ) => {
       const concurrency = Math.min(formData.concurrency, MAX_CONCURRENCY);
       const promises = Array.from({ length: concurrency }).map(async () => {
@@ -80,7 +81,7 @@ export const useRunner = () => {
             successCount: prev.successCount + 1,
             lastResponse: JSON.stringify(res.data).slice(0, 300),
           }));
-          addLog('success', `✓ 200 OK (${duration}ms)`, duration);
+          addLog('success', `✓ ${label} 200 OK (${duration}ms)`, duration);
         } catch (err: unknown) {
           const duration = Math.round(performance.now() - startTime);
           if (signal.aborted) return;
@@ -92,7 +93,7 @@ export const useRunner = () => {
             failureCount: prev.failureCount + 1,
             lastResponse: errorMsg,
           }));
-          addLog('error', `✗ Failed: ${errorMsg} (${duration}ms)`, duration);
+          addLog('error', `✗ ${label} failed: ${errorMsg} (${duration}ms)`, duration);
         }
       });
       await Promise.allSettled(promises);
@@ -159,7 +160,20 @@ export const useRunner = () => {
       while (isRunningRef.current && dayjs().isBefore(endTime)) {
         if (signal.aborted) break;
 
-        await runBatch(formData, signal, runRequest);
+        await runBatch(formData, signal, runRequest, mode);
+
+        if (!isRunningRef.current || signal.aborted) break;
+
+        await runBatch(
+          formData,
+          signal,
+          (healthSignal) =>
+            fetchHealth({
+              base_url: formData.base_url,
+              signal: healthSignal,
+            }),
+          'health'
+        );
 
         if (!isRunningRef.current || signal.aborted) break;
 

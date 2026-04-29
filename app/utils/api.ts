@@ -3,6 +3,15 @@ import { encryptPassword } from './encrypt';
 
 const TIMEOUT = 30000;
 
+const buildBackendUrl = (baseUrl: string, path: string) => {
+  const normalizedBase = baseUrl.trim().replace(/\/+$/, '');
+  const origin = /^https?:\/\//i.test(normalizedBase)
+    ? normalizedBase
+    : `https://${normalizedBase}`;
+
+  return `${origin}${path}`;
+};
+
 export interface BrowserLoginPayload {
   frontend_login_url: string;
   username: string;
@@ -63,7 +72,7 @@ export const fetchDashboard = async (
 
   return axios.post('/api/proxy', {
     method: 'GET',
-    url: `https://${payload.base_url}/admin/dashboard`,
+    url: buildBackendUrl(payload.base_url, '/admin/dashboard'),
     params: {
       page: 1,
       limit: 100000,
@@ -84,14 +93,26 @@ export const fetchPatients = async (
 ): Promise<AxiosResponse> => {
   return axios.post('/api/proxy', {
     method: 'GET',
-    url: `https://${payload.base_url}/patient/getAllPatients`,
+    url: buildBackendUrl(payload.base_url, '/patient/getAllPatients'),
     headers: {
       Authorization: `Bearer ${payload.token}`,
     },
     params: {
       page: '1',
-      limit: '80000000',
+      limit: '8',
     }
+  }, {
+    timeout: TIMEOUT,
+    signal: payload.signal,
+  });
+};
+
+export const fetchHealth = async (
+  payload: { base_url: string; signal?: AbortSignal }
+): Promise<AxiosResponse> => {
+  return axios.post('/api/proxy', {
+    method: 'GET',
+    url: buildBackendUrl(payload.base_url, '/_health'),
   }, {
     timeout: TIMEOUT,
     signal: payload.signal,

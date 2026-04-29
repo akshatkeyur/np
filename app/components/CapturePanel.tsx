@@ -56,9 +56,9 @@ interface CaptureState {
 }
 
 const CapturePanel: React.FC<CapturePanelProps> = ({ onCaptured, isRunning }) => {
-  const [loginUrl, setLoginUrl] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [loginUrl, setLoginUrl] = useState('https://app.subqdocs.ai/subq-admin/login');
+  const [username, setUsername] = useState('subqdocs_admin');
+  const [password, setPassword] = useState('Admin@123');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   const [showDebugLogs, setShowDebugLogs] = useState(true); // auto-open on error

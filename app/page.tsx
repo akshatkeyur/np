@@ -25,10 +25,10 @@ import dayjs from 'dayjs';
 
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
-    frontend_login_url: '',
+    frontend_login_url: 'https://app.subqdocs.ai/login',
     base_url: '',
-    username: '',
-    password: '',
+    username: 'adrian.tinajero@yopmail.com',
+    password: 'Dev@1234',
     concurrency: 5,
     concurrency_interval: 2000,
     start_time: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -142,6 +142,7 @@ export default function Home() {
 
   const hasCapturedPassword = !!formData.manual_encrypted_password;
   const hasPatientToken = !!patientToken;
+  const hasBothCredentialModes = hasCapturedPassword && hasPatientToken;
 
   const canRunDashboard =
     !!formData.base_url &&
@@ -149,14 +150,14 @@ export default function Home() {
     (!!formData.password || hasCapturedPassword) &&
     !!formData.start_time &&
     !!formData.end_time &&
-    !hasPatientToken;
+    (!hasPatientToken || hasBothCredentialModes);
 
   const canRunPatient =
     !!formData.base_url &&
     !!formData.start_time &&
     !!formData.end_time &&
     hasPatientToken &&
-    !hasCapturedPassword;
+    (!hasCapturedPassword || hasBothCredentialModes);
 
   return (
     <ThemeProvider theme={theme}>
