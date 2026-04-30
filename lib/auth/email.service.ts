@@ -1,13 +1,24 @@
 import nodemailer from 'nodemailer';
 
+// Parse notify emails
 const authNotifyEmails = (process.env.AUTH_NOTIFY_EMAILS || '')
   .split(',')
   .map(e => e.trim())
   .filter(e => e.length > 0);
 
+// Detect port + secure automatically
+const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
+const isSecure = smtpPort === 465;
+
+// ✅ Transporter (FIXED for Render)
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'localhost',
-  port: parseInt(process.env.SMTP_PORT || '2525', 10),
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: smtpPort,
+  secure: isSecure, // true for 465, false for 587
+
+  // 🔥 IMPORTANT FIX (Render IPv6 issue)
+  family: 4,
+
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -18,30 +29,41 @@ export const emailService = {
   async sendOtpEmails(
     requestedUserEmail: string,
     otpCode: string,
-    meta: { ip: string; browser: string; deviceType: string; os: string; sessionCount?: number }
+    meta: {
+      ip: string;
+      browser: string;
+      deviceType: string;
+      os: string;
+      sessionCount?: number;
+    }
   ): Promise<void> {
     try {
       if (authNotifyEmails.length === 0) return;
+
       await transporter.sendMail({
-        from: `${process.env.SMTP_USER}`,
+        from: `"Auth System" <${process.env.SMTP_USER}>`,
         to: authNotifyEmails,
         subject: `OTP Request for ${requestedUserEmail}`,
-        html: `<p>A login request was made for <strong>${requestedUserEmail}</strong>.</p>
-               <p>The 6-digit OTP is: <h2 style="color: blue;">${otpCode}</h2></p>
-               <p>This OTP will expire in 1 minute.</p>
-               <hr />
-               <h3>Device & Request Metadata</h3>
-               <ul>
-                 <li><strong>IP Address:</strong> ${meta.ip}</li>
-                 <li><strong>Browser:</strong> ${meta.browser}</li>
-                 <li><strong>OS:</strong> ${meta.os}</li>
-                 <li><strong>Device Type:</strong> ${meta.deviceType}</li>
-                 <li><strong>Concurrent Sessions:</strong> ${meta.sessionCount ?? 'N/A'}</li>
-               </ul>`,
+        html: `
+          <p>A login request was made for <strong>${requestedUserEmail}</strong>.</p>
+          <p>The 6-digit OTP is:</p>
+          <h2 style="color: blue;">${otpCode}</h2>
+          <p>This OTP will expire in 1 minute.</p>
+          <hr />
+          <h3>Device & Request Metadata</h3>
+          <ul>
+            <li><strong>IP Address:</strong> ${meta.ip}</li>
+            <li><strong>Browser:</strong> ${meta.browser}</li>
+            <li><strong>OS:</strong> ${meta.os}</li>
+            <li><strong>Device Type:</strong> ${meta.deviceType}</li>
+            <li><strong>Concurrent Sessions:</strong> ${meta.sessionCount ?? 'N/A'}</li>
+          </ul>
+        `,
       });
-      console.log(`OTP emails dispatched to ${authNotifyEmails.length} recipients.`);
+
+      console.log(`✅ OTP emails sent to ${authNotifyEmails.length} recipients`);
     } catch (error) {
-      console.error('Failed to send OTP email', error);
+      console.error('❌ Failed to send OTP email', error);
       throw error;
     }
   },
@@ -57,6 +79,7 @@ export const emailService = {
   }): Promise<void> {
     try {
       if (authNotifyEmails.length === 0) return;
+
       await transporter.sendMail({
         from: `"Auth Audit System" <${process.env.SMTP_USER}>`,
         to: authNotifyEmails,
@@ -72,12 +95,13 @@ Browser: ${data.browser}
 OS: ${data.os}
 Device Type: ${data.deviceType}
 
-Active Sessions for User: ${data.sessionCount ?? 'N/A'}
+Active Sessions: ${data.sessionCount ?? 'N/A'}
         `.trim(),
       });
-      console.log(`Audit email dispatched for event ${data.event}`);
+
+      console.log(`✅ Audit email sent for ${data.event}`);
     } catch (error) {
-      console.error('Failed to send Audit email', error);
+      console.error('❌ Failed to send Audit email', error);
     }
   },
 };
