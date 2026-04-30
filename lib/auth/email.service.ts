@@ -1,29 +1,27 @@
 import nodemailer from 'nodemailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 // Parse notify emails
 const authNotifyEmails = (process.env.AUTH_NOTIFY_EMAILS || '')
   .split(',')
-  .map(e => e.trim())
-  .filter(e => e.length > 0);
+  .map((e) => e.trim())
+  .filter((e) => e.length > 0);
 
-// Detect port + secure automatically
+// SMTP config
 const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
 const isSecure = smtpPort === 465;
 
-// ✅ Transporter (FIXED for Render)
+// ✅ Transporter (Type-safe + Render fix)
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: smtpPort,
-  secure: isSecure, // true for 465, false for 587
-
-  // 🔥 IMPORTANT FIX (Render IPv6 issue)
-  family: 4,
-
+  secure: isSecure,
+  family: 4, // 🔥 IMPORTANT: fixes Render IPv6 issue
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-});
+} as SMTPTransport.Options);
 
 export const emailService = {
   async sendOtpEmails(
@@ -49,7 +47,9 @@ export const emailService = {
           <p>The 6-digit OTP is:</p>
           <h2 style="color: blue;">${otpCode}</h2>
           <p>This OTP will expire in 1 minute.</p>
+
           <hr />
+
           <h3>Device & Request Metadata</h3>
           <ul>
             <li><strong>IP Address:</strong> ${meta.ip}</li>
