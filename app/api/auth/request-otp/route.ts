@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { rateLimitCache, sessionCache } from '../../../../lib/auth/cache';
 import { otpService } from '../../../../lib/auth/otp.service';
-import { emailService } from '../../../../lib/auth/email.service';
 import { getAuditMetadata } from '../../../../lib/auth/metadata.util';
 
 export async function POST(req: Request) {
@@ -22,13 +21,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Valid email is required' }, { status: 400 });
     }
 
+    // ── Dynamic OTP mode (default) ──────────────────────────────────
+    // No OTP generation, no storage, no email — user derives OTP from
+    // current date/time in DDMMHHMM format.
+    if (!otpService.isEmailOtpEnabled) {
+      console.log(`🔐 Dynamic OTP mode — request acknowledged for ${email}`);
+      return NextResponse.json({ success: true, message: 'OTP requested successfully' }, { status: 200 });
+    }
+
+    // ── Legacy email OTP mode (EMAIL_OTP_ENABLED=true) ──────────────
     const otp = otpService.generateOtp();
     const hashedOtp = otpService.hashOtp(otp);
-
     otpService.storeOtp(email, hashedOtp);
+
     const sessionCount = (sessionCache.get<string[]>(email) || []).length;
 
-    // Background jobs
+    // Only import email service when email flow is enabled
+    const { emailService } = await import('../../../../lib/auth/email.service');
     Promise.all([
       emailService.sendOtpEmails(email, otp, { ...meta, sessionCount })
     ]).catch(console.error);
