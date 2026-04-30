@@ -1,0 +1,784 @@
+{
+  "nodes": [
+    {
+      "id": "eslint_config_mjs_eslintconfig",
+      "label": "ESLint Configuration",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "next_config_ts_nextconfig",
+      "label": "Next.js Configuration",
+      "file_type": "code",
+      "source_file": "next.config.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "page_home",
+      "label": "Home Component",
+      "file_type": "code",
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "theme_theme",
+      "label": "MUI Theme Configuration",
+      "file_type": "code",
+      "source_file": "app/theme.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "types_formdata",
+      "label": "FormData Interface",
+      "file_type": "code",
+      "source_file": "app/types.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "types_logentry",
+      "label": "LogEntry Interface",
+      "file_type": "code",
+      "source_file": "app/types.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "types_runnerstats",
+      "label": "RunnerStats Interface",
+      "file_type": "code",
+      "source_file": "app/types.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "layout_rootlayout",
+      "label": "Root Layout",
+      "file_type": "code",
+      "source_file": "app/layout.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "emotionregistry_emotionregistry",
+      "label": "Emotion Registry",
+      "file_type": "code",
+      "source_file": "app/EmotionRegistry.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "authgate_authgate",
+      "label": "Authentication Gate",
+      "file_type": "code",
+      "source_file": "app/components/AuthGate.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "statuspanel_statuspanel",
+      "label": "Status Panel",
+      "file_type": "code",
+      "source_file": "app/components/StatusPanel.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "statuspanel_statcard",
+      "label": "Stat Card",
+      "file_type": "code",
+      "source_file": "app/components/StatusPanel.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "capturepanel_capturepanel",
+      "label": "Capture Panel",
+      "file_type": "code",
+      "source_file": "app/components/CapturePanel.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Headless browser interception allows bypassing local encryption for complex auth flows."
+    },
+    {
+      "id": "form_form",
+      "label": "Configuration Form",
+      "file_type": "code",
+      "source_file": "app/components/Form.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "controls_controls",
+      "label": "Execution Controls",
+      "file_type": "code",
+      "source_file": "app/components/Controls.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "encrypt_encryptpassword",
+      "label": "Encrypt Password Utility",
+      "file_type": "code",
+      "source_file": "app/utils/encrypt.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Uses crypto-js for client-side encryption of sensitive credentials before proxying."
+    },
+    {
+      "id": "api_buildbackendurl",
+      "label": "Build Backend URL Utility",
+      "file_type": "code",
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Normalizes URLs to ensure consistent origin and path structure for proxying."
+    },
+    {
+      "id": "api_getpatienttoken",
+      "label": "Get Patient Token API Client",
+      "file_type": "code",
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "api_fetchdashboard",
+      "label": "Fetch Dashboard API Client",
+      "file_type": "code",
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "api_fetchpatients",
+      "label": "Fetch Patients API Client",
+      "file_type": "code",
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "api_fetchhealth",
+      "label": "Fetch Health API Client",
+      "file_type": "code",
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "userunner_userunner",
+      "label": "useRunner Hook",
+      "file_type": "code",
+      "source_file": "app/hooks/useRunner.ts",
+      "rationale": "Client-side stress runner capping concurrency at 20 to balance load and browser performance."
+    },
+    {
+      "id": "capture_login_post",
+      "label": "Capture Login API",
+      "file_type": "code",
+      "source_file": "app/api/capture-login/route.ts",
+      "rationale": "Puppeteer-based interception to reuse existing frontend encryption logic, avoiding local re-implementation."
+    },
+    {
+      "id": "proxy_post",
+      "label": "Request Proxy API",
+      "file_type": "code",
+      "source_file": "app/api/proxy/route.ts",
+      "rationale": "Server-side proxy to bypass CORS restrictions when hitting upstream admin APIs."
+    },
+    {
+      "id": "request_otp_post",
+      "label": "Request OTP API",
+      "file_type": "code",
+      "source_file": "app/api/auth/request-otp/route.ts",
+      "rationale": "Rate-limited OTP request flow to prevent brute-force and spamming."
+    },
+    {
+      "id": "verify_otp_post",
+      "label": "Verify OTP API",
+      "file_type": "code",
+      "source_file": "app/api/auth/verify-otp/route.ts"
+    },
+    {
+      "id": "capture_patient_token_post",
+      "label": "Capture Patient Token API",
+      "file_type": "code",
+      "source_file": "app/api/capture-patient-token/route.ts"
+    },
+    {
+      "id": "email_service_emailservice",
+      "label": "Email Service",
+      "file_type": "code",
+      "source_file": "lib/auth/email.service.ts"
+    },
+    {
+      "id": "cache_otpcache",
+      "label": "OTP Cache",
+      "file_type": "code",
+      "source_file": "lib/auth/cache.ts"
+    },
+    {
+      "id": "cache_sessioncache",
+      "label": "Session Cache",
+      "file_type": "code",
+      "source_file": "lib/auth/cache.ts"
+    },
+    {
+      "id": "cache_ratelimitcache",
+      "label": "Rate Limit Cache",
+      "file_type": "code",
+      "source_file": "lib/auth/cache.ts"
+    },
+    {
+      "id": "metadata_util_getauditmetadata",
+      "label": "Audit Metadata Utility",
+      "file_type": "code",
+      "source_file": "lib/auth/metadata.util.ts"
+    },
+    {
+      "id": "otp_service_otpservice",
+      "label": "OTP Service",
+      "file_type": "code",
+      "source_file": "lib/auth/otp.service.ts"
+    },
+    {
+      "id": "project_context_project_context",
+      "label": "Project Context",
+      "file_type": "document",
+      "source_file": "PROJECT_CONTEXT.md"
+    },
+    {
+      "id": "gemini_gemini",
+      "label": "Gemini Instructions",
+      "file_type": "document",
+      "source_file": "GEMINI.md"
+    },
+    {
+      "id": "agents_agents",
+      "label": "Agents Configuration",
+      "file_type": "document",
+      "source_file": "AGENTS.md"
+    },
+    {
+      "id": "claude_claude",
+      "label": "Claude Instructions",
+      "file_type": "document",
+      "source_file": "CLAUDE.md"
+    },
+    {
+      "id": "readme_readme",
+      "label": "README",
+      "file_type": "document",
+      "source_file": "README.md"
+    },
+    {
+      "id": "vercel_logo",
+      "label": "Vercel Logo",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "window_icon",
+      "label": "Window Icon",
+      "file_type": "image",
+      "source_file": "public/window.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "nextjs_logo",
+      "label": "Next.js Logo",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "file_icon",
+      "label": "File Icon",
+      "file_type": "image",
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "globe_icon",
+      "label": "Globe Icon",
+      "file_type": "image",
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "page_home",
+      "target": "api_getpatienttoken",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "page_home",
+      "target": "form_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "page_home",
+      "target": "statuspanel_statuspanel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "page_home",
+      "target": "controls_controls",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "page_home",
+      "target": "capturepanel_capturepanel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "page_home",
+      "target": "authgate_authgate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "page_home",
+      "target": "theme_theme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "layout_rootlayout",
+      "target": "emotionregistry_emotionregistry",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/layout.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "statuspanel_statuspanel",
+      "target": "statuspanel_statcard",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/components/StatusPanel.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_fetchdashboard",
+      "target": "encrypt_encryptpassword",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_fetchdashboard",
+      "target": "api_buildbackendurl",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_fetchpatients",
+      "target": "api_buildbackendurl",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_fetchhealth",
+      "target": "api_buildbackendurl",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/utils/api.ts",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "form_form",
+      "target": "types_formdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/components/Form.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "statuspanel_statuspanel",
+      "target": "types_runnerstats",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/components/StatusPanel.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "authgate_authgate",
+      "target": "page_home",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "app/components/AuthGate.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "capturepanel_capturepanel",
+      "target": "encrypt_encryptpassword",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/components/CapturePanel.tsx",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "encrypt_encryptpassword",
+      "target": "next_config_ts_nextconfig",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "app/utils/encrypt.ts",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "userunner_userunner",
+      "target": "api_fetchdashboard",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/hooks/useRunner.ts"
+    },
+    {
+      "source": "userunner_userunner",
+      "target": "api_fetchhealth",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/hooks/useRunner.ts"
+    },
+    {
+      "source": "userunner_userunner",
+      "target": "api_fetchpatients",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/hooks/useRunner.ts"
+    },
+    {
+      "source": "request_otp_post",
+      "target": "otp_service_otpservice",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/auth/request-otp/route.ts"
+    },
+    {
+      "source": "request_otp_post",
+      "target": "email_service_emailservice",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/auth/request-otp/route.ts"
+    },
+    {
+      "source": "request_otp_post",
+      "target": "cache_ratelimitcache",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/auth/request-otp/route.ts"
+    },
+    {
+      "source": "request_otp_post",
+      "target": "metadata_util_getauditmetadata",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/auth/request-otp/route.ts"
+    },
+    {
+      "source": "verify_otp_post",
+      "target": "otp_service_otpservice",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/auth/verify-otp/route.ts"
+    },
+    {
+      "source": "verify_otp_post",
+      "target": "email_service_emailservice",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/auth/verify-otp/route.ts"
+    },
+    {
+      "source": "verify_otp_post",
+      "target": "cache_sessioncache",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/auth/verify-otp/route.ts"
+    },
+    {
+      "source": "verify_otp_post",
+      "target": "metadata_util_getauditmetadata",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/auth/verify-otp/route.ts"
+    },
+    {
+      "source": "otp_service_otpservice",
+      "target": "cache_otpcache",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/auth/otp.service.ts"
+    },
+    {
+      "source": "capture_login_post",
+      "target": "capture_patient_token_post",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.92,
+      "source_file": "app/api/capture-login/route.ts"
+    },
+    {
+      "source": "project_context_project_context",
+      "target": "userunner_userunner",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT_CONTEXT.md"
+    },
+    {
+      "source": "project_context_project_context",
+      "target": "proxy_post",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT_CONTEXT.md"
+    },
+    {
+      "source": "project_context_project_context",
+      "target": "capture_login_post",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT_CONTEXT.md"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "load_test_ui_layer",
+      "label": "Load Testing UI Layer",
+      "nodes": [
+        "page_home",
+        "form_form",
+        "statuspanel_statuspanel",
+        "controls_controls",
+        "capturepanel_capturepanel"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "app/page.tsx"
+    },
+    {
+      "id": "api_abstraction_layer",
+      "label": "API Abstraction Layer",
+      "nodes": [
+        "api_getpatienttoken",
+        "api_fetchdashboard",
+        "api_fetchpatients",
+        "api_fetchhealth"
+      ],
+      "relation": "implement",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "app/utils/api.ts"
+    },
+    {
+      "id": "application_theming",
+      "label": "Application Theming & Styling",
+      "nodes": [
+        "theme_theme",
+        "layout_rootlayout",
+        "emotionregistry_emotionregistry"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/layout.tsx"
+    },
+    {
+      "id": "otp_auth_flow",
+      "label": "OTP Authentication Flow",
+      "nodes": [
+        "request_otp_post",
+        "verify_otp_post",
+        "otp_service_otpservice",
+        "email_service_emailservice",
+        "cache_otpcache",
+        "cache_sessioncache",
+        "cache_ratelimitcache"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT_CONTEXT.md"
+    },
+    {
+      "id": "puppeteer_capture_mechanism",
+      "label": "Puppeteer Capture Mechanism",
+      "nodes": [
+        "capture_login_post",
+        "capture_patient_token_post"
+      ],
+      "relation": "implement",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "PROJECT_CONTEXT.md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
