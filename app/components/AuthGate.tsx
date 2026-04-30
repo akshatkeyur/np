@@ -153,7 +153,7 @@ export default function AuthGate({ children }: AuthGateProps) {
                 placeholder="123456"
                 required
                 value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').substring(0, 6))}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').substring(0, 8))}
                 autoFocus
                 sx={{
                   mb: 3,
