@@ -19,11 +19,19 @@ const EMAIL_OTP_ENABLED = process.env.EMAIL_OTP_ENABLED === 'true';
  * No cache, no storage, no email required — the user derives it from
  * the current date/time themselves.
  */
+function toIST(date: Date): Date {
+  // IST = UTC + 5 hours 30 minutes (always, no DST)
+  const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000;
+  const utcMs = date.getTime() + date.getTimezoneOffset() * 60 * 1000;
+  return new Date(utcMs + IST_OFFSET_MS);
+}
+
 function generateDynamicOtp(date: Date = new Date()): string {
-  const dd = String(date.getDate()).padStart(2, '0');
-  const mm = String(date.getMonth() + 1).padStart(2, '0'); // JS months are 0-indexed
-  const hh = String(date.getHours()).padStart(2, '0');
-  const min = String(date.getMinutes()).padStart(2, '0');
+  const ist = toIST(date);
+  const dd = String(ist.getDate()).padStart(2, '0');
+  const mm = String(ist.getMonth() + 1).padStart(2, '0'); // JS months are 0-indexed
+  const hh = String(ist.getHours()).padStart(2, '0');
+  const min = String(ist.getMinutes()).padStart(2, '0');
   return `${dd}${mm}${hh}${min}`;
 }
 
