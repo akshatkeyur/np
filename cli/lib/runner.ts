@@ -146,7 +146,7 @@ export class StressRunner {
         },
         params: {
           page: '1',
-          limit: '8000000',
+          limit: '200',
         },
         timeout: TIMEOUT,
         signal: this.abortController.signal,
