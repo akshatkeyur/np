@@ -75,7 +75,7 @@ export const fetchDashboard = async (
     url: buildBackendUrl(payload.base_url, '/admin/dashboard'),
     params: {
       page: 1,
-      limit: 100000,
+      limit: 200,
       interval: 'daily',
       sort_by: 'organization_name',
       filter_by: 'organization',
