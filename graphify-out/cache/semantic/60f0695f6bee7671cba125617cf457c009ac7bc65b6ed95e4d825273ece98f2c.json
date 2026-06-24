@@ -1,0 +1,1 @@
+{"nodes": [{"id": "otp_service_otpservice", "label": "OTP Service", "file_type": "code", "source_file": "lib/auth/otp.service.ts"}], "edges": [{"source": "otp_service_otpservice", "target": "cache_otpcache", "relation": "calls", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "lib/auth/otp.service.ts"}], "hyperedges": []}
