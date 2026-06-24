@@ -96,7 +96,7 @@ export const logger = {
     console.log('  ╚═══════════════════════════════════════════════════════╝' + colors.reset);
   },
 
-  requestLog: (message: string, status: 'success' | 'error' | 'info' | 'warning', duration?: number) => {
+  requestLog: (message: string, status: 'success' | 'error' | 'info' | 'warn', duration?: number) => {
     const color = colors[status];
     const icon = levelIcons[status];
     const timestamp = `${colors.dim}[${formatTimestamp()}]${colors.reset}`;

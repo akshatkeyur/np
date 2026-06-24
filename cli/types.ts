@@ -30,8 +30,9 @@ export interface TestStats {
 }
 
 export interface RequestLog {
+  id: number;
   timestamp: string;
-  status: 'success' | 'error' | 'info' | 'warning';
+  status: 'success' | 'error' | 'info' | 'warn';
   message: string;
   duration?: number;
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { CliOptions, DEFAULT_OPTIONS } from './types';
+import { CapturedCredentials, CliOptions, DEFAULT_OPTIONS } from './types';
 import { captureCredentials } from './lib/capture';
 import { StressRunner } from './lib/runner';
 import { logger } from './lib/logger';
@@ -35,7 +35,7 @@ async function main(): Promise<void> {
   console.log('');
 
   let capturedBaseUrl = options.baseUrl || '';
-  let credentials: { token?: string; encryptedPassword?: string; plainPassword?: string; user: string };
+  let credentials: CapturedCredentials;
 
   if (options.type === 'patient') {
     if (options.token) {
@@ -43,6 +43,7 @@ async function main(): Promise<void> {
       credentials = {
         token: options.token,
         user: options.username,
+        baseUrl: capturedBaseUrl,
       };
       if (options.baseUrl) {
         capturedBaseUrl = options.baseUrl;
@@ -63,6 +64,7 @@ async function main(): Promise<void> {
       credentials = {
         token: captured.token,
         user: captured.user,
+        baseUrl: captured.baseUrl,
       };
       capturedBaseUrl = captured.baseUrl;
     }
@@ -72,6 +74,7 @@ async function main(): Promise<void> {
       credentials = {
         plainPassword: options.password,
         user: options.username,
+        baseUrl: capturedBaseUrl,
       };
       if (options.baseUrl) {
         capturedBaseUrl = options.baseUrl;
@@ -92,6 +95,7 @@ async function main(): Promise<void> {
       credentials = {
         encryptedPassword: captured.encryptedPassword,
         user: captured.user,
+        baseUrl: captured.baseUrl,
       };
       capturedBaseUrl = captured.baseUrl;
     }

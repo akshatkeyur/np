@@ -38,7 +38,7 @@ export async function captureCredentials(
 
   try {
     log('info', 'Starting credential capture via headless browser...');
-    log('step', 1, 6, 'Launching headless browser');
+    logger.step(1, 6, 'Launching headless browser');
 
     browser = await puppeteer.launch({
       headless: true,
@@ -58,7 +58,7 @@ export async function captureCredentials(
     const page: Page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
 
-    log('step', 2, 6, 'Navigating to login page');
+    logger.step(2, 6, 'Navigating to login page');
     log('info', `URL: ${frontendUrl}`);
 
     const response = await page.goto(frontendUrl, {
@@ -70,7 +70,7 @@ export async function captureCredentials(
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    log('step', 3, 6, 'Detecting input fields');
+    logger.step(3, 6, 'Detecting input fields');
     const inputSelectors = await page.evaluate(() => {
       const inputs = Array.from(document.querySelectorAll('input'));
       return inputs.map((el) => ({
@@ -90,7 +90,7 @@ export async function captureCredentials(
     });
     log('info', `Found ${buttons.length} button(s): ${buttons.map((b) => b.type || 'no-type').join(', ')}`);
 
-    log('step', 4, 6, 'Filling credentials');
+    logger.step(4, 6, 'Filling credentials');
 
     const usernameSelectors = [
       'input[name="email"]',
@@ -117,7 +117,7 @@ export async function captureCredentials(
       throw new Error('Could not fill username field');
     }
 
-    log('step', 5, 6, 'Filling password');
+    logger.step(5, 6, 'Filling password');
     const passwordSelectors = [
       'input[name="password"]',
       'input[type="password"]',
@@ -141,7 +141,7 @@ export async function captureCredentials(
       throw new Error('Could not fill password field');
     }
 
-    log('step', 6, 6, 'Submitting and intercepting response');
+    logger.step(6, 6, 'Submitting and intercepting response');
 
     let capturedApiUrl = '';
     let capturedPayload: Record<string, unknown> | null = null;
@@ -221,7 +221,7 @@ export async function captureCredentials(
 
       const navigationPromise = new Promise<string>((resolve) => {
         page.on('navigation', (nav) => {
-          resolve(nav.url());
+          resolve((nav as { url: () => string }).url());
         });
       });
 
@@ -242,7 +242,7 @@ export async function captureCredentials(
       
       let capturedRedirectUrl = '';
       page.on('navigation', (nav) => {
-        capturedRedirectUrl = nav.url();
+        capturedRedirectUrl = (nav as { url: () => string }).url();
       });
 
       await new Promise((resolve) => setTimeout(resolve, 5000));
